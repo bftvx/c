@@ -1,0 +1,22 @@
+<script>
+const API_URL = "YOUR_WEB_APP_URL";
+const CATEGORY = "home";
+
+async function loadVideos() {
+  const res = await fetch(`${API_URL}?category=${CATEGORY}`);
+  const data = await res.json();
+  render(data);
+}
+
+async function addVideo() {
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      url: videoUrl.value,
+      title: videoTitle.value,
+      category: CATEGORY
+    })
+  });
+  loadVideos();
+}
+</script>
