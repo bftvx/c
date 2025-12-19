@@ -69,7 +69,8 @@ iframe {
   <input id="videoTitle" placeholder="Video title">
   <br>
   <button onclick="addVideo()">➕</button>
-  <button onclick="goSecond()">📁</button>
+  <button onclick="goSecond()">Indian📁</button>
+  <button onclick="goSecond1()">Live📁</button>
 </div>
 
 <div class="video-grid" id="videoGrid"></div>
@@ -82,7 +83,9 @@ const COLLECTION = "home";
 function goSecond() {
   window.location.href = "second.html";
 }
-
+function goSecond1() {
+  window.location.href = "Third.html";
+}
 async function addVideo() {
   if (!videoUrl.value.trim()) return alert("Paste a URL");
   await fetch(API_URL, {
