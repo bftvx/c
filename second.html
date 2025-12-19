@@ -67,7 +67,8 @@ iframe {
   <input id="videoTitle" placeholder="Video title">
   <br>
   <button onclick="addVideo()">➕</button>
-  <button onclick="goSecond()">📁</button>
+  <button onclick="goSecond()">Asian📁</button>
+  <button onclick="goSecond1()">Live📁</button>
 </div>
 
 <div class="video-grid" id="videoGrid"></div>
@@ -78,7 +79,10 @@ const DELETE_PASSWORD = "00000";
 const COLLECTION = "Second";
 
 function goSecond() {
-  window.location.href = "second.html";
+  window.location.href = "index.html";
+}
+function goSecond1() {
+  window.location.href = "third.html";
 }
 
 async function addVideo() {
