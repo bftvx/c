@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Second Collection</title>
+</head>
+<body>
+
+<h1>Home Collection</h1>
+
+<div class="top-bar">
+  <input id="videoUrl" placeholder="Paste URL">
+  <input id="videoTitle" placeholder="Video title">
+  <br>
+  <button onclick="addVideo()">➕</button>
+  <button onclick="goSecond()">📁</button>
+</div>
+
+<div class="video-grid" id="videoGrid"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxSOCkaX90KG5pI3iCxnSJfiEiNBvLwakjuSa0EtfISSqCVzVg4aBTVpWtzjM2tAmO0/exec";
+const DELETE_PASSWORD = "00000";
+const COLLECTION = "Second";
+
+function goSecond() {
+  window.location.href = "second.html";
+}
+
+async function addVideo() {
+  if (!videoUrl.value.trim()) return alert("Paste a URL");
+  await fetch(API_URL, {
+    method:"POST",
+    body:JSON.stringify({
+      url:videoUrl.value,
+      title:videoTitle.value,
+      collection:COLLECTION
+    })
+  });
+  videoUrl.value=""; videoTitle.value="";
+  loadVideos();
+}
+
+async function deleteVideo(url) {
+  if (prompt("Delete password:") !== DELETE_PASSWORD) return;
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"delete",
+      url,
+      collection:COLLECTION
+    })
+  });
+  loadVideos();
+}
+
+async function renameTitle(url,title) {
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"rename",
+      url,
+      title,
+      collection:COLLECTION
+    })
+  });
+}
+
+async function loadVideos() {
+  const res = await fetch(`${API_URL}?collection=${COLLECTION}`);
+  const data = await res.json();
+  videoGrid.innerHTML="";
+  data.reverse().forEach(([url,title])=>{
+    videoGrid.innerHTML+=`
+      <div class="video-card">
+        <iframe src="${url}" allowfullscreen></iframe>
+        <div class="title" ondblclick="edit(this,'${url}')">${title}</div>
+        <div class="actions">
+          <a href="${url}" target="_blank">▶️</a>
+          <button class="delete-btn" onclick="deleteVideo('${url}')">🗑️</button>
+        </div>
+      </div>`;
+  });
+}
+
+function edit(el,url){
+  const i=document.createElement("input");
+  i.value=el.innerText;
+  i.className="title-edit";
+  el.replaceWith(i);
+  i.focus();
+  i.onblur=()=>{ renameTitle(url,i.value); loadVideos(); };
+}
+
+loadVideos();
+</script>
+</body>
+</html>
