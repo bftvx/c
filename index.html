@@ -117,6 +117,8 @@ iframe {
   <button onclick="addVideo()">➕</button>
   <button onclick="goSecond()">Indian📁</button>
   <button onclick="goSecond1()">Japanese📁</button>
+    <button onclick="goSecond2()">Western📁</button>
+    <button onclick="goSecond3()">Others📁</button>
 </div>
 
 <div class="video-grid" id="videoGrid"></div>
@@ -128,7 +130,7 @@ const PAGE_PASSWORD = "12345";
 /* API CONFIG */
 const API_URL = "https://script.google.com/macros/s/AKfycbwFaVWJ951P00JWxU4Lyok20Q5Guw2E2W32LjXjUAr3oBPdqHj7PCtdW6SkAm3aGVKT/exec";
 const DELETE_PASSWORD = "00000";
-const COLLECTION = "home";
+const COLLECTION = "Asian";
 
 /* LOCK LOGIC */
 function unlock() {
@@ -147,9 +149,10 @@ if (sessionStorage.getItem("unlocked") === "yes") {
 }
 
 /* NAV */
-function goSecond() { window.location.href = "second.html"; }
-function goSecond1() { window.location.href = "Third.html"; }
-
+function goSecond() { window.location.href = "indian.html"; }
+function goSecond1() { window.location.href = "jap.html"; }
+function goSecond2() { window.location.href = "western.html"; }
+function goSecond3() { window.location.href = "others.html"; }
 /* CORE */
 async function addVideo() {
   if (!videoUrl.value.trim()) return alert("Paste a URL");
