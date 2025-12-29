@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Others Collection</title>
+  <style>
+/* (same CSS as you already have — unchanged) */
+body {
+  font-family: Arial, sans-serif;
+  background: #0f0f0f;
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
+h1 { text-align:center; margin-bottom:25px; font-weight:500; }
+.top-bar { text-align:center; margin-bottom:35px; }
+.top-bar input {
+  padding:10px; width:260px; margin:5px;
+  background:#181818; color:#fff;
+  border:1px solid #303030; border-radius:6px;
+}
+.top-bar button {
+  padding:10px 14px; background:#272727;
+  border:1px solid #3a3a3a; color:#fff;
+  border-radius:8px; cursor:pointer; font-size:18px;
+}
+.video-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:22px; max-width:1400px; margin:auto;
+}
+.video-card {
+  background:#181818; padding:10px; border-radius:14px;
+  transition:.25s;
+}
+.video-card:hover {
+  transform:translateY(-6px);
+  box-shadow:0 12px 30px rgba(0,0,0,.75);
+}
+iframe {
+  width:100%; height:200px;
+  border-radius:12px; border:none;
+}
+.title {
+  text-align:center; margin-top:8px;
+  font-size:14px; color:#e5e5e5; cursor:pointer;
+}
+.actions {
+  display:flex; justify-content:center;
+  gap:10px; margin-top:10px;
+}
+.actions a,.delete-btn {
+  width:36px; height:36px; background:#2a2a2a;
+  border-radius:10px; display:flex;
+  align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.delete-btn:hover { background:#7a1f1f; }
+</style>
+</head>
+<body>
+
+<h1>Japanese Collection</h1>
+
+<div class="top-bar">
+  <input id="videoUrl" placeholder="Paste URL">
+  <input id="videoTitle" placeholder="Video title">
+  <br>
+  <button onclick="addVideo()">➕</button>
+  <button onclick="goSecond()">Asian📁</button>
+  <button onclick="goSecond1()">Indian📁</button>
+  <button onclick="goSecond2()">Japanese📁</button>
+  <button onclick="goSecond3()">Western📁</button>
+</div>
+
+<div class="video-grid" id="videoGrid"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwFaVWJ951P00JWxU4Lyok20Q5Guw2E2W32LjXjUAr3oBPdqHj7PCtdW6SkAm3aGVKT/exec";
+const DELETE_PASSWORD = "00000";
+const COLLECTION = "Others";
+
+function goSecond() {
+  window.location.href = "index.html";
+}
+function goSecond1() {
+  window.location.href = "second.html";
+}
+function goSecond2() {
+  window.location.href = "third.html";
+}
+function goSecond2() {
+  window.location.href = "western.html";
+}
+async function addVideo() {
+  if (!videoUrl.value.trim()) return alert("Paste a URL");
+  await fetch(API_URL, {
+    method:"POST",
+    body:JSON.stringify({
+      url:videoUrl.value,
+      title:videoTitle.value,
+      collection:COLLECTION
+    })
+  });
+  videoUrl.value=""; videoTitle.value="";
+  loadVideos();
+}
+
+async function deleteVideo(url) {
+  if (prompt("Delete password:") !== DELETE_PASSWORD) return;
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"delete",
+      url,
+      collection:COLLECTION
+    })
+  });
+  loadVideos();
+}
+
+async function renameTitle(url,title) {
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"rename",
+      url,
+      title,
+      collection:COLLECTION
+    })
+  });
+}
+
+async function loadVideos() {
+  const res = await fetch(`${API_URL}?collection=${COLLECTION}`);
+  const data = await res.json();
+  videoGrid.innerHTML="";
+  data.reverse().forEach(([url,title])=>{
+    videoGrid.innerHTML+=`
+      <div class="video-card">
+        <iframe src="${url}" allowfullscreen></iframe>
+        <div class="title" ondblclick="edit(this,'${url}')">${title}</div>
+        <div class="actions">
+          <a href="${url}" target="_blank">▶️</a>
+          <button class="delete-btn" onclick="deleteVideo('${url}')">🗑️</button>
+        </div>
+      </div>`;
+  });
+}
+
+function edit(el,url){
+  const i=document.createElement("input");
+  i.value=el.innerText;
+  i.className="title-edit";
+  el.replaceWith(i);
+  i.focus();
+  i.onblur=()=>{ renameTitle(url,i.value); loadVideos(); };
+}
+
+loadVideos();
+</script>
+</body>
+</html>
