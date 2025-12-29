@@ -69,6 +69,8 @@ iframe {
   <button onclick="addVideo()">➕</button>
   <button onclick="goSecond()">Asian📁</button>
   <button onclick="goSecond1()">Indian📁</button>
+  <button onclick="goSecond2()">Western📁</button>
+  <button onclick="goSecond3()">Others📁</button>
 </div>
 
 <div class="video-grid" id="videoGrid"></div>
@@ -76,7 +78,7 @@ iframe {
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwFaVWJ951P00JWxU4Lyok20Q5Guw2E2W32LjXjUAr3oBPdqHj7PCtdW6SkAm3aGVKT/exec";
 const DELETE_PASSWORD = "00000";
-const COLLECTION = "Japanese";
+const COLLECTION = "Jap";
 
 function goSecond() {
   window.location.href = "index.html";
@@ -84,7 +86,12 @@ function goSecond() {
 function goSecond1() {
   window.location.href = "second.html";
 }
-
+function goSecond2() {
+  window.location.href = "western.html";
+}
+function goSecond3() {
+  window.location.href = "others.html";
+}
 async function addVideo() {
   if (!videoUrl.value.trim()) return alert("Paste a URL");
   await fetch(API_URL, {
