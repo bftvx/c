@@ -5,7 +5,44 @@
 <title>My Video Library</title>
 
 <style>
-/* (same CSS as you already have — unchanged) */
+/* ===== LOCK SCREEN ===== */
+#lockScreen {
+  position: fixed;
+  inset: 0;
+  background: #0f0f0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+#lockBox {
+  background: #181818;
+  padding: 30px;
+  border-radius: 14px;
+  text-align: center;
+  width: 280px;
+}
+#lockBox input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  background: #101010;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+#lockBox button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  background: #272727;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* ===== YOUR ORIGINAL CSS ===== */
 body {
   font-family: Arial, sans-serif;
   background: #0f0f0f;
@@ -62,6 +99,15 @@ iframe {
 
 <body>
 
+<!-- 🔒 LOCK SCREEN -->
+<div id="lockScreen">
+  <div id="lockBox">
+    <h2>🔒 Locked</h2>
+    <input id="pagePassword" type="password" placeholder="Enter password">
+    <button onclick="unlock()">Unlock</button>
+  </div>
+</div>
+
 <h1>Home Collection</h1>
 
 <div class="top-bar">
@@ -76,16 +122,35 @@ iframe {
 <div class="video-grid" id="videoGrid"></div>
 
 <script>
+/* 🔐 PASSWORD CONFIG */
+const PAGE_PASSWORD = "12345";
+
+/* API CONFIG */
 const API_URL = "https://script.google.com/macros/s/AKfycbwFaVWJ951P00JWxU4Lyok20Q5Guw2E2W32LjXjUAr3oBPdqHj7PCtdW6SkAm3aGVKT/exec";
 const DELETE_PASSWORD = "00000";
 const COLLECTION = "home";
 
-function goSecond() {
-  window.location.href = "second.html";
+/* LOCK LOGIC */
+function unlock() {
+  if (pagePassword.value === PAGE_PASSWORD) {
+    sessionStorage.setItem("unlocked", "yes");
+    document.getElementById("lockScreen").style.display = "none";
+    loadVideos();
+  } else {
+    alert("Wrong password");
+  }
 }
-function goSecond1() {
-  window.location.href = "Third.html";
+
+if (sessionStorage.getItem("unlocked") === "yes") {
+  document.getElementById("lockScreen").style.display = "none";
+  loadVideos();
 }
+
+/* NAV */
+function goSecond() { window.location.href = "second.html"; }
+function goSecond1() { window.location.href = "Third.html"; }
+
+/* CORE */
 async function addVideo() {
   if (!videoUrl.value.trim()) return alert("Paste a URL");
   await fetch(API_URL, {
@@ -96,7 +161,8 @@ async function addVideo() {
       collection:COLLECTION
     })
   });
-  videoUrl.value=""; videoTitle.value="";
+  videoUrl.value="";
+  videoTitle.value="";
   loadVideos();
 }
 
@@ -150,8 +216,7 @@ function edit(el,url){
   i.focus();
   i.onblur=()=>{ renameTitle(url,i.value); loadVideos(); };
 }
-
-loadVideos();
 </script>
+
 </body>
 </html>
