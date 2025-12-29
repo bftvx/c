@@ -1,10 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Others Collection</title>
-  <style>
-/* (same CSS as you already have — unchanged) */
+<title>Asian Library</title>
+
+<style>
+/* ===== LOCK SCREEN ===== */
+#lockScreen {
+  position: fixed;
+  inset: 0;
+  background: #0f0f0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+#lockBox {
+  background: #181818;
+  padding: 30px;
+  border-radius: 14px;
+  text-align: center;
+  width: 280px;
+}
+#lockBox input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  background: #101010;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+#lockBox button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  background: #272727;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* ===== YOUR ORIGINAL CSS ===== */
 body {
   font-family: Arial, sans-serif;
   background: #0f0f0f;
@@ -58,40 +96,65 @@ iframe {
 .delete-btn:hover { background:#7a1f1f; }
 </style>
 </head>
+
 <body>
 
-<h1>Japanese Collection</h1>
+<!-- 🔒 LOCK SCREEN -->
+<div id="lockScreen">
+  <div id="lockBox">
+    <h2>🔒 Locked</h2>
+    <input id="pagePassword" type="password" placeholder="Enter password">
+    <button onclick="unlock()">Unlock</button>
+  </div>
+</div>
+
+<h1>Asian Collection</h1>
 
 <div class="top-bar">
   <input id="videoUrl" placeholder="Paste URL">
   <input id="videoTitle" placeholder="Video title">
   <br>
   <button onclick="addVideo()">➕</button>
-  <button onclick="goSecond()">Asian📁</button>
-  <button onclick="goSecond1()">Indian📁</button>
-  <button onclick="goSecond2()">Japanese📁</button>
-  <button onclick="goSecond3()">Western📁</button>
+  <button onclick="goSecond()">Indian📁</button>
+  <button onclick="goSecond1()">Japanese📁</button>
+  <button onclick="goSecond2()">Western📁</button>
+  <button onclick="goSecond3()">Korean📁</button>
 </div>
 
 <div class="video-grid" id="videoGrid"></div>
 
 <script>
+/* 🔐 PASSWORD CONFIG */
+const PAGE_PASSWORD = "12345";
+
+/* API CONFIG */
 const API_URL = "https://script.google.com/macros/s/AKfycbwFaVWJ951P00JWxU4Lyok20Q5Guw2E2W32LjXjUAr3oBPdqHj7PCtdW6SkAm3aGVKT/exec";
 const DELETE_PASSWORD = "00000";
-const COLLECTION = "Others";
+const COLLECTION = "others";
 
-function goSecond() {
-  window.location.href = "index.html";
+/* LOCK LOGIC */
+function unlock() {
+  if (pagePassword.value === PAGE_PASSWORD) {
+    sessionStorage.setItem("unlocked", "yes");
+    document.getElementById("lockScreen").style.display = "none";
+    loadVideos();
+  } else {
+    alert("Wrong password");
+  }
 }
-function goSecond1() {
-  window.location.href = "second.html";
+
+if (sessionStorage.getItem("unlocked") === "yes") {
+  document.getElementById("lockScreen").style.display = "none";
+  loadVideos();
 }
-function goSecond2() {
-  window.location.href = "third.html";
-}
-function goSecond2() {
-  window.location.href = "western.html";
-}
+
+/* NAV */
+function goSecond() { window.location.href = "second.html"; }
+function goSecond1() { window.location.href = "third.html"; }
+function goSecond2() { window.location.href = "western.html"; }
+function goSecond3() { window.location.href = "index.html"; }
+
+/* CORE */
 async function addVideo() {
   if (!videoUrl.value.trim()) return alert("Paste a URL");
   await fetch(API_URL, {
@@ -102,7 +165,8 @@ async function addVideo() {
       collection:COLLECTION
     })
   });
-  videoUrl.value=""; videoTitle.value="";
+  videoUrl.value="";
+  videoTitle.value="";
   loadVideos();
 }
 
@@ -156,8 +220,7 @@ function edit(el,url){
   i.focus();
   i.onblur=()=>{ renameTitle(url,i.value); loadVideos(); };
 }
-
-loadVideos();
 </script>
+
 </body>
 </html>
